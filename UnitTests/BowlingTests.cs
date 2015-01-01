@@ -44,6 +44,23 @@ namespace UnitTests
             AssertFrame(frames[9], 10, Maybe.Just(300), Maybe.Just(10), Maybe.Just(10), Maybe.Just(10));
         }
 
+        [Test]
+        public void Test3()
+        {
+            var actual = Bowling.ProcessRolls(Enumerable.Repeat(5, 21));
+            var frames = actual.ToArray();
+            AssertFrame(frames[0], 1, Maybe.Just(15), Maybe.Just(5), Maybe.Just(5));
+            AssertFrame(frames[1], 2, Maybe.Just(30), Maybe.Just(5), Maybe.Just(5));
+            AssertFrame(frames[2], 3, Maybe.Just(45), Maybe.Just(5), Maybe.Just(5));
+            AssertFrame(frames[3], 4, Maybe.Just(60), Maybe.Just(5), Maybe.Just(5));
+            AssertFrame(frames[4], 5, Maybe.Just(75), Maybe.Just(5), Maybe.Just(5));
+            AssertFrame(frames[5], 6, Maybe.Just(90), Maybe.Just(5), Maybe.Just(5));
+            AssertFrame(frames[6], 7, Maybe.Just(105), Maybe.Just(5), Maybe.Just(5));
+            AssertFrame(frames[7], 8, Maybe.Just(120), Maybe.Just(5), Maybe.Just(5));
+            AssertFrame(frames[8], 9, Maybe.Just(135), Maybe.Just(5), Maybe.Just(5));
+            AssertFrame(frames[9], 10, Maybe.Just(150), Maybe.Just(5), Maybe.Just(5), Maybe.Just(5));
+        }
+
         private static void AssertFrame(
             Frame frame,
             int frameNumber,
