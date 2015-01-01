@@ -31,17 +31,17 @@ namespace BowlingLib
             get { return _runningTotal; }
         }
 
-        public virtual Maybe<int> FirstRoll
+        public Maybe<int> FirstRoll
         {
             get { return _firstRoll; }
         }
 
-        public virtual Maybe<int> SecondRoll
+        public Maybe<int> SecondRoll
         {
             get { return _secondRoll; }
         }
 
-        public virtual Maybe<int> ThirdRoll
+        public Maybe<int> ThirdRoll
         {
             get { return _thirdRoll; }
         }
