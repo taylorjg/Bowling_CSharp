@@ -32,10 +32,12 @@ namespace BowlingLib
         {
             var initialFrames = Enumerable.Range(1, 10).Select(frameNumber => new InitialFrame(frameNumber) as Frame);
             var seed = new Accumulator(initialFrames, Maybe.Just(0));
+
             var aggregateResult = rolls.Aggregate(seed, (accumulator, roll) =>
                 {
                     var rollWasConsumed = false;
                     var runningTotal = accumulator.RunningTotal;
+
                     var newFrames = accumulator.Frames.Select(frame =>
                         {
                             if (rollWasConsumed) return frame;
@@ -44,8 +46,10 @@ namespace BowlingLib
                             runningTotal = newFrame.RunningTotal;
                             return newFrame;
                         });
+
                     return new Accumulator(newFrames, runningTotal);
                 });
+
             return aggregateResult.Frames;
         }
     }
