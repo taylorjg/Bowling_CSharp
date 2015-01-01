@@ -1,4 +1,6 @@
-﻿namespace BowlingLib
+﻿using MonadLib;
+
+namespace BowlingLib
 {
     public class InitialFrame : Frame
     {
@@ -12,7 +14,7 @@
             get { return true; }
         }
 
-        internal override Frame ApplyRoll(int firstRoll)
+        internal override Frame ApplyRoll(int firstRoll, Maybe<int> _)
         {
             return (firstRoll == 10)
                        ? new StrikeNeedTwoBonusBallsFrame(FrameNumber) as Frame

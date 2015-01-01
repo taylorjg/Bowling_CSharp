@@ -72,7 +72,7 @@ namespace UnitTests
             if (thirdRoll == null) thirdRoll = NothingRoll;
 
             Assert.That(frame.FrameNumber, Is.EqualTo(frameNumber));
-            //Assert.That(frame.RunningTotal, Is.EqualTo(runningTotal));
+            Assert.That(frame.RunningTotal, Is.EqualTo(runningTotal));
             Assert.That(frame.FirstRoll, Is.EqualTo(firstRoll));
             Assert.That(frame.SecondRoll, Is.EqualTo(secondRoll));
             Assert.That(frame.ThirdRoll, Is.EqualTo(thirdRoll));

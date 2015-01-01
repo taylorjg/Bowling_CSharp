@@ -14,10 +14,10 @@ namespace BowlingLib
             get { return IsLastFrame; }
         }
 
-        internal override Frame ApplyRoll(int bonusBall)
+        internal override Frame ApplyRoll(int bonusBall, Maybe<int> runningTotal)
         {
-            // new rt = current rt + 10 + bonusBall
-            return new CompleteFrame(FrameNumber, NothingRunningTotal, FirstRoll, SecondRoll, IsLastFrame ? Maybe.Just(bonusBall) : NothingRoll);
+            var newRunningTotal = runningTotal.Bind(rt => Maybe.Just(rt + 10 + bonusBall));
+            return new CompleteFrame(FrameNumber, newRunningTotal, FirstRoll, SecondRoll, IsLastFrame ? Maybe.Just(bonusBall) : NothingRoll);
         }
     }
 }

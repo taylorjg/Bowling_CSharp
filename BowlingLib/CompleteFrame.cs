@@ -14,7 +14,7 @@ namespace BowlingLib
             get { return false; }
         }
 
-        internal override Frame ApplyRoll(int _)
+        internal override Frame ApplyRoll(int _, Maybe<int> __)
         {
             return this;
         }

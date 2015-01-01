@@ -14,7 +14,7 @@ namespace BowlingLib
             get { return false; }
         }
 
-        internal override Frame ApplyRoll(int firstBonusBall)
+        internal override Frame ApplyRoll(int firstBonusBall, Maybe<int> runningTotal)
         {
             return new StrikeNeedOneBonusBallFrame(FrameNumber, firstBonusBall);
         }

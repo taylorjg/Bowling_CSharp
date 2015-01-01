@@ -64,7 +64,7 @@ namespace BowlingLib
         }
 
         internal abstract bool WillConsumeRoll { get; }
-        internal abstract Frame ApplyRoll(int roll);
+        internal abstract Frame ApplyRoll(int roll, Maybe<int> runningTotal);
 
         private readonly int _frameNumber;
         private readonly Maybe<int> _runningTotal;
