@@ -48,10 +48,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bowling.cs" />
+    <Compile Include="CompleteFrame.cs" />
     <Compile Include="Frame.cs" />
-    <Compile Include="FrameState.cs" />
+    <Compile Include="InitialFrame.cs" />
+    <Compile Include="NeedSecondBallFrame.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StateMachineRow.cs" />
+    <Compile Include="SpareNeedOneBonusBallFrame.cs" />
+    <Compile Include="StrikeNeedOneBonusBallFrame.cs" />
+    <Compile Include="StrikeNeedTwoBonusBallsFrame.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

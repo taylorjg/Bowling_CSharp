@@ -1,48 +1,24 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using MonadLib;
+﻿using MonadLib;
 
 namespace BowlingLib
 {
-    public class Frame
+    public abstract class Frame
     {
-        public const int MinPins = 0;
-        public const int MaxPins = 10;
-        public const int NumFrames = 10;
+        public static readonly Maybe<int> NothingRunningTotal = Maybe.Nothing<int>();
+        public static readonly Maybe<int> NothingRoll = Maybe.Nothing<int>();
 
-        public Frame(
+        protected Frame(
             int frameNumber,
-            FrameState frameState,
             Maybe<int> runningTotal,
             Maybe<int> firstRoll,
             Maybe<int> secondRoll,
-            int numBonusBallsNeeded,
-            IEnumerable<int> bonusBalls)
+            Maybe<int> thirdRoll)
         {
             _frameNumber = frameNumber;
-            _frameState = frameState;
             _runningTotal = runningTotal;
             _firstRoll = firstRoll;
             _secondRoll = secondRoll;
-            _numBonusBallsNeeded = numBonusBallsNeeded;
-            _bonusBalls = bonusBalls;
-        }
-
-        public bool IsLastFrame {
-            get { return FrameNumber == NumFrames; }
-        }
-
-        public bool IsStrikeFrame {
-            get { return FirstRoll.Match(r => r == MaxPins, () => false); }
-        }
-
-        public bool IsSpareFrame {
-            get
-            {
-                var r1 = _firstRoll.FromMaybe(0);
-                var r2 = _secondRoll.FromMaybe(0);
-                return r1 < MaxPins && r1 + r2 == MaxPins;
-            }
+            _thirdRoll = thirdRoll;
         }
 
         public int FrameNumber
@@ -50,81 +26,50 @@ namespace BowlingLib
             get { return _frameNumber; }
         }
 
-        internal FrameState FrameState
-        {
-            get { return _frameState; }
-        }
-
         public Maybe<int> RunningTotal
         {
             get { return _runningTotal; }
         }
 
-        public Maybe<int> FirstRoll
+        public virtual Maybe<int> FirstRoll
         {
             get { return _firstRoll; }
         }
 
-        public Maybe<int> SecondRoll
+        public virtual Maybe<int> SecondRoll
         {
+            get { return _secondRoll; }
+        }
+
+        public virtual Maybe<int> ThirdRoll
+        {
+            get { return _thirdRoll; }
+        }
+
+        public bool IsLastFrame {
+            get { return _frameNumber == 10; }
+        }
+
+        public bool IsStrikeFrame {
+            get { return _firstRoll.FromMaybe(0) == 10; }
+        }
+
+        public bool IsSpareFrame {
             get
             {
-                if (IsStrikeFrame && IsLastFrame && _bonusBalls.Any())
-                {
-                    return Maybe.Just(_bonusBalls.First());
-                }
-
-                return _secondRoll;
+                var r1 = _firstRoll.FromMaybe(0);
+                var r2 = _secondRoll.FromMaybe(0);
+                return r1 != 10 && r1 + r2 == 10;
             }
         }
 
-        public Maybe<int> ThirdRoll
-        {
-            get
-            {
-                var numBonusBalls = _bonusBalls.Count();
-
-                if (IsStrikeFrame && IsLastFrame && numBonusBalls == 2)
-                {
-                    return Maybe.Just(_bonusBalls.Last());
-                }
-
-                if (IsSpareFrame && IsLastFrame && numBonusBalls == 1)
-                {
-                    return Maybe.Just(_bonusBalls.First());
-                }
-
-                return Maybe.Nothing<int>();
-            }
-        }
-
-        internal int NumBonusBallsNeeded
-        {
-            get { return _numBonusBallsNeeded; }
-        }
-
-        internal IEnumerable<int> BonusBalls
-        {
-            get { return _bonusBalls; }
-        }
-
-        public int FrameScore
-        {
-            get
-            {
-                return
-                    _firstRoll.FromMaybe(0) +
-                    _secondRoll.FromMaybe(0) +
-                    _bonusBalls.Sum();
-            }
-        }
+        internal abstract bool WillConsumeRoll { get; }
+        internal abstract Frame ApplyRoll(int roll);
 
         private readonly int _frameNumber;
-        private readonly FrameState _frameState;
         private readonly Maybe<int> _runningTotal;
         private readonly Maybe<int> _firstRoll;
         private readonly Maybe<int> _secondRoll;
-        private readonly int _numBonusBallsNeeded;
-        private readonly IEnumerable<int> _bonusBalls;
+        private readonly Maybe<int> _thirdRoll;
     }
 }
