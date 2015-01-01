@@ -13,28 +13,37 @@ namespace BowlingLib
         public static IEnumerable<Frame> ProcessRolls(IEnumerable<int> rolls)
         {
             var initialFrames = Enumerable.Range(1, NumFrames).Select(frameNumber => new InitialFrame(frameNumber) as Frame);
-            var seed = Tuple.Create(initialFrames, Maybe.Just(0));
 
-            var aggregateResult = rolls.Aggregate(seed, (accumulator, roll) =>
+            var seed1 = Tuple.Create(initialFrames);
+            var aggregateResult = rolls.Aggregate(seed1, (accumulator1, roll) =>
                 {
-                    var currentFrames = accumulator.Item1;
-                    var runningTotal = accumulator.Item2;
-                    var rollWasConsumed = false;
+                    var currentFrames = accumulator1.Item1;
 
-                    var newFrames = currentFrames.Select(frame =>
+                    var seed2 = Tuple.Create(Enumerable.Empty<Frame>(), Maybe.Just(0), false);
+                    var aggregateResult2 = currentFrames.Aggregate(seed2, (accumulator2, oldFrame) =>
                         {
-                            if (rollWasConsumed) return frame;
-                            rollWasConsumed = frame.WillConsumeRoll;
-                            var newFrame = frame.ApplyRoll(roll, runningTotal);
-                            runningTotal = newFrame.RunningTotal;
-                            return newFrame;
+                            var newFrames = accumulator2.Item1;
+                            var runningTotal = accumulator2.Item2;
+                            var rollWasConsumed = accumulator2.Item3;
+
+                            if (rollWasConsumed)
+                            {
+                                return Tuple.Create(newFrames.Append(oldFrame), Maybe.Nothing<int>(), true);
+                            }
+
+                            var newFrame = oldFrame.ApplyRoll(roll, runningTotal);
+                            var newRunningTotal = newFrame.RunningTotal;
+                            var newRollWasConsumed = oldFrame.WillConsumeRoll;
+
+                            return Tuple.Create(newFrames.Append(newFrame), newRunningTotal, newRollWasConsumed);
                         });
 
-                    return Tuple.Create(newFrames, runningTotal);
+                    var latestFrames = aggregateResult2.Item1;
+                    return Tuple.Create(latestFrames);
                 });
 
-            var resultFrames = aggregateResult.Item1;
-            return resultFrames;
+            var resultantFrames = aggregateResult.Item1;
+            return resultantFrames;
         }
     }
 }

@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="Bowling.cs" />
     <Compile Include="CompleteFrame.cs" />
+    <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="Frame.cs" />
     <Compile Include="InitialFrame.cs" />
     <Compile Include="NeedSecondBallFrame.cs" />
