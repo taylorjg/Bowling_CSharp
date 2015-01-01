@@ -4,8 +4,8 @@ namespace BowlingLib
 {
     public abstract class Frame
     {
-        public static readonly Maybe<int> NothingRunningTotal = Maybe.Nothing<int>();
-        public static readonly Maybe<int> NothingRoll = Maybe.Nothing<int>();
+        protected static readonly Maybe<int> NothingRunningTotal = Maybe.Nothing<int>();
+        protected static readonly Maybe<int> NothingRoll = Maybe.Nothing<int>();
 
         protected Frame(
             int frameNumber,
