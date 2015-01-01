@@ -16,7 +16,7 @@ namespace BowlingLib
 
         internal override Frame ApplyRoll(int firstRoll, Maybe<int> _)
         {
-            return (firstRoll == 10)
+            return (firstRoll == Bowling.MaxPins)
                        ? new StrikeNeedTwoBonusBallsFrame(FrameNumber) as Frame
                        : new NeedSecondBallFrame(FrameNumber, firstRoll);
         }

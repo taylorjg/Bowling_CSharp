@@ -16,7 +16,7 @@ namespace BowlingLib
 
         internal override Frame ApplyRoll(int bonusBall, Maybe<int> runningTotal)
         {
-            var newRunningTotal = runningTotal.Bind(rt => Maybe.Just(rt + 10 + bonusBall));
+            var newRunningTotal = runningTotal.Bind(rt => Maybe.Just(rt + Bowling.MaxPins + bonusBall));
             return new CompleteFrame(FrameNumber, newRunningTotal, FirstRoll, SecondRoll, IsLastFrame ? Maybe.Just(bonusBall) : NothingRoll);
         }
     }

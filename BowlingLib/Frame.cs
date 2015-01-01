@@ -47,11 +47,11 @@ namespace BowlingLib
         }
 
         public bool IsLastFrame {
-            get { return _frameNumber == 10; }
+            get { return _frameNumber == Bowling.NumFrames; }
         }
 
         public bool IsStrikeFrame {
-            get { return _firstRoll.FromMaybe(0) == 10; }
+            get { return _firstRoll.FromMaybe(0) == Bowling.MaxPins; }
         }
 
         public bool IsSpareFrame {
@@ -59,7 +59,7 @@ namespace BowlingLib
             {
                 var r1 = _firstRoll.FromMaybe(0);
                 var r2 = _secondRoll.FromMaybe(0);
-                return r1 != 10 && r1 + r2 == 10;
+                return r1 != Bowling.MaxPins && r1 + r2 == Bowling.MaxPins;
             }
         }
 

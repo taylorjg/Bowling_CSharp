@@ -18,7 +18,7 @@ namespace BowlingLib
         {
             var firstRoll = FirstRoll.FromJust;
             var newRunningTotal = runningTotal.Bind(rt => Maybe.Just(rt + firstRoll + secondRoll));
-            return (firstRoll + secondRoll == 10)
+            return (firstRoll + secondRoll == Bowling.MaxPins)
                        ? new SpareNeedOneBonusBallFrame(FrameNumber, firstRoll, secondRoll) as Frame
                        : new CompleteFrame(FrameNumber, newRunningTotal, FirstRoll, Maybe.Just(secondRoll), NothingRoll);
         }

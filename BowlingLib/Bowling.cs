@@ -6,6 +6,9 @@ namespace BowlingLib
 {
     public static class Bowling
     {
+        public const int NumFrames = 10;
+        public const int MaxPins = 10;
+
         private class Accumulator
         {
             public Accumulator(IEnumerable<Frame> frames, Maybe<int> runningTotal)
@@ -30,7 +33,7 @@ namespace BowlingLib
 
         public static IEnumerable<Frame> ProcessRolls(IEnumerable<int> rolls)
         {
-            var initialFrames = Enumerable.Range(1, 10).Select(frameNumber => new InitialFrame(frameNumber) as Frame);
+            var initialFrames = Enumerable.Range(1, NumFrames).Select(frameNumber => new InitialFrame(frameNumber) as Frame);
             var seed = new Accumulator(initialFrames, Maybe.Just(0));
 
             var aggregateResult = rolls.Aggregate(seed, (accumulator, roll) =>

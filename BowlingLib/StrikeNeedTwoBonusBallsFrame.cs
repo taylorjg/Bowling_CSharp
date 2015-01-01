@@ -5,7 +5,7 @@ namespace BowlingLib
     public class StrikeNeedTwoBonusBallsFrame : Frame
     {
         public StrikeNeedTwoBonusBallsFrame(int frameNumber)
-            : base(frameNumber, NothingRunningTotal, Maybe.Just(10), NothingRoll, NothingRoll)
+            : base(frameNumber, NothingRunningTotal, Maybe.Just(Bowling.MaxPins), NothingRoll, NothingRoll)
         {
         }
 
