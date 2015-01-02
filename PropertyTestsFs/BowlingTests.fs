@@ -1,21 +1,10 @@
 ﻿module BowlingTests
 
-open NUnit.Framework
 open FsCheck
 open FsCheck.NUnit
 open FsCheck.Fluent
 open System.Linq
 open BowlingLib
-
-type MyArbitraries =
-  static member NonShrinkingIntArray() =
-      { new Arbitrary<int[]>() with
-          override x.Generator = Gen.constant [||]
-          override x.Shrinker _ = Seq.empty }    
-
-[<SetUp>]
-let setUp =
-    DefaultArbitraries.Add<MyArbitraries>() |> ignore
 
 let nonStrikeValidFrameRolls = 
     seq {
@@ -47,7 +36,7 @@ let genRolls (genFrame:Gen<int list>) =
         return [rollsForTenFrames; Seq.take numBonusBallsNeeded bonusBalls] |> Seq.concat |> Seq.toArray
     }
 
-let checkFrameInvariant (f:Frame) : bool =
+let checkFrameInvariant (f:Frame) =
     f.RunningTotal.IsJust &&
     f.FirstRoll.IsJust &&
     if f.IsLastFrame then
@@ -60,12 +49,15 @@ let checkFrameInvariant (f:Frame) : bool =
         (if f.IsStrikeFrame then f.SecondRoll.IsNothing else true) &&
         f.ThirdRoll.IsNothing
 
-let prop_FrameInvariantHoldsForAllFrames rolls : bool =
+let checkFrameInvariantHoldsForAllFrames rolls =
     let frames = Bowling.ProcessRolls rolls
     Seq.forall checkFrameInvariant frames
 
+let dontShrinkIntArrays =
+    new System.Func<int[], seq<int[]>>(fun _ -> Seq.empty) 
+
 [<Property>]
 let ``frame invariant holds for all frames``() = 
-    let gen = genRolls genValidFrame
-    let specBuilder = Spec.For (gen, prop_FrameInvariantHoldsForAllFrames)
-    specBuilder.QuickCheckThrowOnFailure()
+    (Spec.For (genRolls genValidFrame, checkFrameInvariantHoldsForAllFrames))
+        .Shrink(dontShrinkIntArrays)
+        .QuickCheckThrowOnFailure()
