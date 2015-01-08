@@ -46,26 +46,25 @@ let genRolls =
     }
 
 let checkFrameInvariant (f:Frame) =
-    f.RunningTotal.IsJust &&
-    f.FirstRoll.IsJust &&
+    f.RunningTotal.IsJust |@ "RunningTotal" .&.
+    f.FirstRoll.IsJust |@ "FirstRoll" .&.
     if f.IsLastFrame then
-        f.SecondRoll.IsJust &&
-        if f.IsStrikeFrame || f.IsSpareFrame then f.ThirdRoll.IsJust else f.ThirdRoll.IsNothing
+        f.SecondRoll.IsJust |@ "SecondRoll when last frame" .&.
+        (if f.IsStrikeFrame || f.IsSpareFrame then f.ThirdRoll.IsJust else f.ThirdRoll.IsNothing) |@ "ThirdRoll when last frame"
     else
         let r1 = f.FirstRoll.FromMaybe 0
         let r2 = f.SecondRoll.FromMaybe 0
-        r1 + r2 <= 10 &&
-        (if f.IsStrikeFrame then f.SecondRoll.IsNothing else true) &&
-        f.ThirdRoll.IsNothing
+        r1 + r2 <= 10 |@ "r1 + r2 <= 10 when not last frame" .&.
+        (if f.IsStrikeFrame then f.SecondRoll.IsNothing else true) |@ "SecondRoll when not last frame" .&.
+        f.ThirdRoll.IsNothing |@ "ThirdRoll when not last frame"
 
 let checkFrameInvariantHoldsForAllFrames rolls =
     let frames = Bowling.ProcessRolls rolls
-    Seq.forall checkFrameInvariant frames
-
-// let dontShrinkIntArrays =
-//     new System.Func<int[], seq<int[]>>(fun _ -> Seq.empty) 
+    let properties = Seq.map checkFrameInvariant frames
+    let seed = Prop.ofTestable true
+    Seq.fold (.&.) seed properties
 
 [<Property>]
 let ``frame invariant holds for all frames``() = 
-    let arb = Arb.fromGen(genRolls)
+    let arb = Arb.fromGen genRolls
     Check.One(Config.VerboseThrowOnFailure, Prop.forAll arb checkFrameInvariantHoldsForAllFrames)
