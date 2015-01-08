@@ -2,8 +2,6 @@
 
 open FsCheck
 open FsCheck.NUnit
-open FsCheck.Fluent
-open System.Linq
 open BowlingLib
 
 let seqNormalFrames = 
@@ -29,7 +27,7 @@ let genFrame =
         (60, Gen.constant strikeFrame)
     ]
 
-let genRolls (genFrame:Gen<int list>) =
+let genRolls =
 
     let calculateNumBonusBallsNeeded rollsForlastFrame =
         match rollsForlastFrame with
@@ -64,11 +62,10 @@ let checkFrameInvariantHoldsForAllFrames rolls =
     let frames = Bowling.ProcessRolls rolls
     Seq.forall checkFrameInvariant frames
 
-let dontShrinkIntArrays =
-    new System.Func<int[], seq<int[]>>(fun _ -> Seq.empty) 
+// let dontShrinkIntArrays =
+//     new System.Func<int[], seq<int[]>>(fun _ -> Seq.empty) 
 
 [<Property>]
 let ``frame invariant holds for all frames``() = 
-    (Spec.For (genRolls genFrame, checkFrameInvariantHoldsForAllFrames))
-        .Shrink(dontShrinkIntArrays)
-        .QuickCheckThrowOnFailure()
+    let arb = Arb.fromGen(genRolls)
+    Check.One(Config.VerboseThrowOnFailure, Prop.forAll arb checkFrameInvariantHoldsForAllFrames)
