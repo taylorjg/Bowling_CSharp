@@ -74,9 +74,10 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BowlingTests.fs" />
     <None Include="packages.config" />
     <None Include="app.config" />
+    <Compile Include="BowlingTests.fs" />
+    <Compile Include="PropWithLabels.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BowlingLib\BowlingLib.csproj">

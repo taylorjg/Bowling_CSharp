@@ -6,17 +6,28 @@ open FsCheck.Fluent
 open System.Linq
 open BowlingLib
 
-let nonStrikeValidFrameRolls = 
+let seqNormalFrames = 
     seq {
         for r1 in 0..9 do
         for r2 in 0..10 do
-        if r1 + r2 <= 10 then yield [r1; r2]
+        if r1 + r2 < 10 then yield [r1; r2]
     }
 
-let genNonStrikeValidFrameRolls = Gen.elements nonStrikeValidFrameRolls
-let genStrikeValidFrameRolls = Gen.constant [10]
+let seqSpareFrames = 
+    seq {
+        for r1 in 0..9 do
+        for r2 in 0..10 do
+        if r1 + r2 = 10 then yield [r1; r2]
+    }
 
-let genValidFrame = Gen.frequency [(40, genNonStrikeValidFrameRolls); (60, genStrikeValidFrameRolls)]
+let strikeFrame = [10]
+
+let genFrame =
+    Gen.frequency [
+        (20, Gen.elements seqNormalFrames);
+        (20, Gen.elements seqSpareFrames);
+        (60, Gen.constant strikeFrame)
+    ]
 
 let genRolls (genFrame:Gen<int list>) =
 
@@ -58,6 +69,6 @@ let dontShrinkIntArrays =
 
 [<Property>]
 let ``frame invariant holds for all frames``() = 
-    (Spec.For (genRolls genValidFrame, checkFrameInvariantHoldsForAllFrames))
+    (Spec.For (genRolls genFrame, checkFrameInvariantHoldsForAllFrames))
         .Shrink(dontShrinkIntArrays)
         .QuickCheckThrowOnFailure()
