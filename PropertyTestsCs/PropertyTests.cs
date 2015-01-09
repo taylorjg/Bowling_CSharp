@@ -4,12 +4,15 @@ using BowlingLib;
 using FsCheck;
 using FsCheck.Fluent;
 using FsCheck.NUnit;
+using FsCheckUtils;
 using Microsoft.FSharp.Core;
 
 namespace PropertyTestsCs
 {
     internal class PropertyTests
     {
+        private static readonly Config MyConfig = Config.VerboseThrowOnFailure;
+
         private static readonly IEnumerable<int[]> NormalFrames =
             from r1 in Enumerable.Range(0, 10)
             from r2 in Enumerable.Range(0, 11)
@@ -47,29 +50,28 @@ namespace PropertyTestsCs
 
         private static Gen<Rose<Result>> CheckFrameInvariant(Frame f)
         {
-            var p1 = PropOperators.op_BarAt(f.RunningTotal.IsJust, "RunningTotal");
-            var p2 = PropOperators.op_BarAt(f.FirstRoll.IsJust, "FirstRoll");
-            var p3 = PropOperators.op_DotAmpDot(p1, p2);
+            var p1 = PropExtensions.Label(f.RunningTotal.IsJust, "RunningTotal");
+            var p2 = PropExtensions.Label(f.FirstRoll.IsJust, "FirstRoll");
+            var p3 = PropExtensions.And(p1, p2);
 
             Gen<Rose<Result>> p4;
 
             if (f.IsLastFrame)
             {
-                p4 = PropOperators.op_BarAt(f.SecondRoll.IsJust, "SecondRoll when last frame");
-                // TODO: finish this...
-                // .&. (if f.IsStrikeFrame || f.IsSpareFrame then f.ThirdRoll.IsJust else f.ThirdRoll.IsNothing) |@ "ThirdRoll when last frame"
+                var pa = PropExtensions.Label(f.SecondRoll.IsJust, "SecondRoll when last frame");
+                var pb = PropExtensions.Label((f.IsStrikeFrame || f.IsSpareFrame) ? f.ThirdRoll.IsJust : f.ThirdRoll.IsNothing, "ThirdRoll when last frame");
+                p4 = PropExtensions.And(pa, pb);
             }
             else
             {
                 var r1 = f.FirstRoll.FromMaybe(0);
                 var r2 = f.SecondRoll.FromMaybe(0);
-                p4 = PropOperators.op_BarAt(r1 + r2 <= 10, "r1 + r2 <= 10 when not last frame");
-                // TODO: finish this...
-                //  .&. f.ThirdRoll.IsNothing |@ "ThirdRoll when not last frame"
+                var pa = PropExtensions.Label(r1 + r2 <= 10, "r1 + r2 <= 10 when not last frame");
+                var pb = PropExtensions.Label(f.ThirdRoll.IsNothing, "ThirdRoll when not last frame");
+                p4 = PropExtensions.And(pa, pb);
             }
 
-            var p5 = PropOperators.op_DotAmpDot(p3, p4);
-            return p5;
+            return PropExtensions.And(p3, p4);
         }
 
         private static Gen<Rose<Result>> CheckFrameInvariantHoldsForAllFrames(IEnumerable<int> rolls)
@@ -77,7 +79,7 @@ namespace PropertyTestsCs
             var frames = Bowling.ProcessRolls(rolls);
             var properties = frames.Select(CheckFrameInvariant);
             var seed = Prop.ofTestable(true);
-            return properties.Aggregate(seed, PropOperators.op_DotAmpDot);
+            return properties.Aggregate(seed, PropExtensions.And);
         }
 
         [Property]
@@ -86,7 +88,7 @@ namespace PropertyTestsCs
             var arb = Arb.fromGen(GenRolls);
             var body = FSharpFunc<int[], Gen<Rose<Result>>>.FromConverter(CheckFrameInvariantHoldsForAllFrames);
             var property = Prop.forAll(arb, body);
-            Check.QuickThrowOnFailure(property);
+            Check.One(MyConfig, property);
         }
     }
 }
