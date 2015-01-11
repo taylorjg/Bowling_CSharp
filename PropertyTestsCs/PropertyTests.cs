@@ -28,9 +28,9 @@ namespace PropertyTestsCs
         private static readonly int[] StrikeFrame = new[] {10};
 
         private static readonly Gen<int[]> GenFrame = Any.WeighedGeneratorIn(
-                new WeightAndValue<Gen<int[]>>(20, Gen.elements(NormalFrames)),
-                new WeightAndValue<Gen<int[]>>(20, Gen.elements(SpareFrames)),
-                new WeightAndValue<Gen<int[]>>(60, Gen.constant(StrikeFrame)));
+                new WeightAndValue<Gen<int[]>>(20, Any.ValueIn(NormalFrames)),
+                new WeightAndValue<Gen<int[]>>(20, Any.ValueIn(SpareFrames)),
+                new WeightAndValue<Gen<int[]>>(60, Any.Value(StrikeFrame)));
 
         private static int CalculateNumBonusBallsNeeded(IList<int> rollsForlastFrame)
         {
