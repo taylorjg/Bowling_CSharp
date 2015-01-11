@@ -9,6 +9,8 @@ using Microsoft.FSharp.Core;
 
 namespace PropertyTestsCs
 {
+    using Property = Gen<Rose<Result>>;
+
     internal class PropertyTests
     {
         private static readonly Config MyConfig = Config.VerboseThrowOnFailure;
@@ -48,19 +50,18 @@ namespace PropertyTestsCs
             let numBonusBallsNeeded = CalculateNumBonusBallsNeeded(rollsForlastFrame)
             select rollsForTenFrames.Concat(bonusBalls.Take(numBonusBallsNeeded)).ToArray();
 
-        private static Gen<Rose<Result>> CheckFrameInvariant(Frame f)
+        private static Property CheckFrameInvariant(Frame f)
         {
             var p1 = PropExtensions.Label(f.RunningTotal.IsJust, "RunningTotal");
             var p2 = PropExtensions.Label(f.FirstRoll.IsJust, "FirstRoll");
-            var p3 = PropExtensions.And(p1, p2);
 
-            Gen<Rose<Result>> p4;
+            Property p3;
 
             if (f.IsLastFrame)
             {
                 var pa = PropExtensions.Label(f.SecondRoll.IsJust, "SecondRoll when last frame");
                 var pb = PropExtensions.Label((f.IsStrikeFrame || f.IsSpareFrame) ? f.ThirdRoll.IsJust : f.ThirdRoll.IsNothing, "ThirdRoll when last frame");
-                p4 = PropExtensions.And(pa, pb);
+                p3 = PropExtensions.And(pa, pb);
             }
             else
             {
@@ -68,25 +69,24 @@ namespace PropertyTestsCs
                 var r2 = f.SecondRoll.FromMaybe(0);
                 var pa = PropExtensions.Label(r1 + r2 <= 10, "r1 + r2 <= 10 when not last frame");
                 var pb = PropExtensions.Label(f.ThirdRoll.IsNothing, "ThirdRoll when not last frame");
-                p4 = PropExtensions.And(pa, pb);
+                p3 = PropExtensions.And(pa, pb);
             }
 
-            return PropExtensions.And(p3, p4);
+            return PropExtensions.AndAll(p1, p2, p3);
         }
 
-        private static Gen<Rose<Result>> CheckFrameInvariantHoldsForAllFrames(IEnumerable<int> rolls)
+        private static Property CheckFrameInvariantHoldsForAllFrames(IEnumerable<int> rolls)
         {
             var frames = Bowling.ProcessRolls(rolls);
             var properties = frames.Select(CheckFrameInvariant);
-            var seed = Prop.ofTestable(true);
-            return properties.Aggregate(seed, PropExtensions.And);
+            return PropExtensions.AndAll(properties.ToArray());
         }
 
         [Property]
         public void FrameInvariantHoldsForAllFrames()
         {
             var arb = Arb.fromGen(GenRolls);
-            var body = FSharpFunc<int[], Gen<Rose<Result>>>.FromConverter(CheckFrameInvariantHoldsForAllFrames);
+            var body = FSharpFunc<int[], Property>.FromConverter(CheckFrameInvariantHoldsForAllFrames);
             var property = Prop.forAll(arb, body);
             Check.One(MyConfig, property);
         }
