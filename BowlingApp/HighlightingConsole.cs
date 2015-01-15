@@ -8,8 +8,13 @@ namespace BowlingApp
 
     internal static class HighlightingConsole
     {
-        public const Char HighlightMarker = '`';
+        private const Char HighlightMarker = '`';
         private const ConsoleColor HighlightColour = ConsoleColor.Yellow;
+
+        public static string Highlight(this string s)
+        {
+            return string.Format("{0}{1}{0}", HighlightMarker, s);
+        }
 
         public static void WriteLine(string line)
         {
