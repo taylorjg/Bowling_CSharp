@@ -11,7 +11,8 @@ namespace PropertyTestsCs
 {
     using Property = Gen<Rose<Result>>;
 
-    internal class PropertyTests
+    [NUnit.Framework.TestFixture]
+    public class PropertyTests
     {
         private static readonly Config MyConfig = Config.VerboseThrowOnFailure;
 
