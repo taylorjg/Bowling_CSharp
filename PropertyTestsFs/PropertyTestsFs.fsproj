@@ -75,7 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <Compile Include="BowlingTests.fs" />
+    <Compile Include="PropertyTestsFs.fs" />
     <Compile Include="FsCheckAddin.fs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,4 +1,4 @@
-namespace FsCheck.NUnit.Examples
+namespace PropertyTestsFs
 
 open NUnit.Core.Extensibility
 

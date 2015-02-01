@@ -1,4 +1,4 @@
-﻿module BowlingTests
+﻿module PropertyTestsFs.PropertyTestsFs
 
 open FsCheck
 open NUnit.Framework

@@ -83,7 +83,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PropertyTests.cs" />
+    <Compile Include="PropertyTestsCs.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

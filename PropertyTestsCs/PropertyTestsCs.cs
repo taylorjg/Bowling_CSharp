@@ -12,7 +12,7 @@ namespace PropertyTestsCs
     using Property = Gen<Rose<Result>>;
 
     [TestFixture]
-    public class PropertyTests
+    public class PropertyTestsCs
     {
         private static readonly Config MyConfig = Config.VerboseThrowOnFailure;
 
