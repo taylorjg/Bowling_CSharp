@@ -1,7 +1,7 @@
 ﻿module BowlingTests
 
 open FsCheck
-open FsCheck.NUnit
+open NUnit.Framework
 open BowlingLib
 
 let seqNormalFrames = 
@@ -64,7 +64,7 @@ let checkFrameInvariantHoldsForAllFrames rolls =
     let seed = Prop.ofTestable true
     Seq.fold (.&.) seed properties
 
-[<Property>]
+[<Test>]
 let ``frame invariant holds for all frames``() = 
     let arb = Arb.fromGen genRolls
     Check.One(Config.VerboseThrowOnFailure, Prop.forAll arb checkFrameInvariantHoldsForAllFrames)

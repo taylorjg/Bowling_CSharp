@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace UnitTests
 {
     [TestFixture]
-    internal class BowlingTests
+    public class BowlingTests
     {
         private static readonly Maybe<int> NothingRoll = Maybe.Nothing<int>();
         

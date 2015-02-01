@@ -3,15 +3,15 @@ using System.Linq;
 using BowlingLib;
 using FsCheck;
 using FsCheck.Fluent;
-using FsCheck.NUnit;
 using FsCheckUtils;
 using Microsoft.FSharp.Core;
+using NUnit.Framework;
 
 namespace PropertyTestsCs
 {
     using Property = Gen<Rose<Result>>;
 
-    [NUnit.Framework.TestFixture]
+    [TestFixture]
     public class PropertyTests
     {
         private static readonly Config MyConfig = Config.VerboseThrowOnFailure;
@@ -83,7 +83,7 @@ namespace PropertyTestsCs
             return PropExtensions.AndAll(properties.ToArray());
         }
 
-        [Property]
+        [Test]
         public void FrameInvariantHoldsForAllFrames()
         {
             var arb = Arb.fromGen(GenRolls);
